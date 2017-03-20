@@ -10,6 +10,8 @@ import java.time.LocalDate;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
 
@@ -56,17 +58,47 @@ public class UserDaoImplTest {
     }
 
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+//    @Rule
+//    public ExpectedException thrown = ExpectedException.none();
+//
+//    @Test
+//    public void testLoginException(){
+//        UserServiceImpl userService = new UserServiceImpl();
+//        UserDaoImpl userDao = new UserDaoImpl();
+//        userService.setUserDao(userDao);
+//        // check for the exception we expect
+//        thrown.expect(NullPointerException.class);
+//        userService.login("","");
+//    }
 
     @Test
-    public void testLoginException(){
+    public void testisAbleToGoToPub(){
         UserServiceImpl userService = new UserServiceImpl();
         UserDaoImpl userDao = new UserDaoImpl();
         userService.setUserDao(userDao);
-        // check for the exception we expect
-        thrown.expect(NullPointerException.class);
-        userService.login("","");
+        assertThat(userService.isAbleToGoToPub(userService.login("Prayuth","1234"), LocalDate.of(2017,3,20)), is(true));
+        assertThat(userService.isAbleToGoToPub(userService.login("Tucky","5675"), LocalDate.of(2017,3,20)), is(false));
+        assertThat(userService.isAbleToGoToPub(userService.login("Honey","aabbcc"), LocalDate.of(2017,3,20)), is(false));
+        assertThat(userService.isAbleToGoToPub(userService.login("None","none"), LocalDate.of(2017,3,20)), is(false));
+
+    }
+    @Test
+    public void testgetPubAllowanceUser(){
+        UserServiceImpl userService = new UserServiceImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
+        userService.setUserDao(userDao);
+        assertThat(userService.getPubAllowanceUser( LocalDate.of(2017,3,20)), hasItems(new User("Prayuth","1234","Tu",
+                LocalDate.of(1979,2,14),"08612345678")));
+    }
+    @Test
+    public void testLogin(){
+        UserServiceImpl userService = new UserServiceImpl();
+        UserDaoImpl userDao = new UserDaoImpl();
+        userService.setUserDao(userDao);
+        assertThat(userService.login("Prayuth","123"),nullValue());
+        assertThat(userService.login("Prayuth","1234"),is(new User("Prayuth","1234","Tu",
+                LocalDate.of(1979,2,14),"08612345678")));
+
     }
 
 
